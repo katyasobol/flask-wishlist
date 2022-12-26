@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!---Coding By CoderGirl!--->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--<title> Profle Card UI Design | CoderGirl </title>-->
+    <!---Custom Css File!--->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css')}}">
+</head>
+
+<body>
+    <section class="main">
+        <div class="buttonset">
+            <a href="/profile/update" class="btn">Настройки</a>
+        </div>
+        <div class="buttonset">
+            <a href="/logout" class="btn1">Выйти</a>
+        </div>
+        <div class="profile-card">
+            <div class="image">
+                <img src="data:image/jpeg;base64,{{ image }}" />
+            </div>
+            <div class="data">
+                <h2>{{ form.firstname }} {{ form.lastname }}</h2>
+                <span>{{ current_user.user }}</span>
+                <h3>{{ form.birthdate }}</h3>
+            </div>
+            <div class="row">
+            </div>
+            <div class="buttons">
+                <a href="/posts/{{ form.user_id }}" class="btn">желания</a>
+                <a href="/newpost" class="btn">создать желание</a>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
