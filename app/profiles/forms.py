@@ -1,6 +1,9 @@
+import re
 from flask_wtf.form import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, EmailField, FileField
+from wtforms import StringField, PasswordField, SubmitField, EmailField, FileField, ValidationError
 from wtforms.validators import InputRequired, Length, Email, EqualTo, Regexp
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Введите свой юзернейм"}, name='username')
@@ -17,3 +20,14 @@ class RegisterForm(FlaskForm):
     birthdate = StringField(validators=[InputRequired(), Length(max=10), Regexp(r'\d\d.\d\d.\d{4}', message='Дата вида дд.мм.гггг')], render_kw={"placeholder": "Введите дату рождения"}, name='birthdate')
     img = FileField(name='img', id='file-input')
     submit = SubmitField("Зарегистрироваться")
+
+def validate_date(field):
+        if re.fullmatch(field, r'\d\d\.\d\d\.\d{4}'):
+            raise ValidationError('дата формата дд,мм.гггг')
+        return True
+
+def verify_img(filename):
+    ext = filename.rsplit('.', 1)[1].lower()
+    if ext in ALLOWED_EXTENSIONS:
+        return True
+    return False

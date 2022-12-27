@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 blueprint = Blueprint(
-    'profiles_blueprint',
+    'profiles',
     __name__,
-    url_prefix=''
+    url_prefix='/profiles', subdomain='profiles'
 )

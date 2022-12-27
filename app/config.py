@@ -1,7 +1,12 @@
 import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+load_dotenv()
+env_path = Path('.')/'.env'
+load_dotenv(dotenv_path=env_path)
 
 class Config(object):
-    basedir = os.path.abspath(os.path.dirname(__file__))
 
     SECRET_KEY = os.getenv('SECRET_KEY')
 
@@ -16,6 +21,7 @@ class ProductionConfig(Config):
     REMEMBER_COOKIE_HTTPONLY = True
     REMEMBER_COOKIE_DURATION = 3600
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False 
 
 
 class DebugConfig(Config):

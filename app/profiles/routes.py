@@ -1,132 +1,107 @@
-from flask import render_template, redirect, request, url_for
-from flask_login import (
-    current_user,
-    login_user,
-    logout_user
-)
+import psycopg2
+from flask import render_template, redirect, request, url_for, flash
+from flask_login import current_user, login_user, logout_user, login_required
+from werkzeug.security import check_password_hash, generate_password_hash
+from base64 import b64encode, b64decode
 
 from app import db, login_manager
 from app.profiles import blueprint
-from app.profiles.forms import LoginForm, CreateAccountForm
+from app.profiles.forms import LoginForm, RegisterForm, validate_date, verify_img
 from app.profiles.models import User, Profile
 
-@blueprint.route('/')
-def route_default():
-    return redirect(url_for('authentication_blueprint.login'))
+@blueprint.route('/', methods=['POST', 'GET'])
+def main():
+    return 'hello'
 
-
-
-@blueprint.route("/github")
-def login_github():
-    """ Github login """
-    if not github.authorized:
-        return redirect(url_for("github.login"))
-
-    res = github.get("/user")
-    return redirect(url_for('home_blueprint.index'))
-
-@blueprint.route('/login', methods=['GET', 'POST'])
-def login():
-    login_form = LoginForm(request.form)
-    if 'login' in request.form:
-
-        # read form data
-        user_id  = request.form['username'] # we can have here username OR email
-        password = request.form['password']
-
-        # Locate user
-        user = Users.find_by_username(user_id)
-
-        # if user not found
-        if not user:
-
-            user = Users.find_by_email(user_id)
-
-            if not user:
-                return render_template( 'accounts/login.html',
-                                        msg='Unknown User or Email',
-                                        form=login_form)
-
-        # Check the password
-        if verify_pass(password, user.password):
-
-            login_user(user)
-            return redirect(url_for('authentication_blueprint.route_default'))
-
-        # Something (user or pass) is not ok
-        return render_template('accounts/login.html',
-                               msg='Wrong user or password',
-                               form=login_form)
-
-    if not current_user.is_authenticated:
-        return render_template('accounts/login.html',
-                               form=login_form)
-    return redirect(url_for('home_blueprint.index'))
-
-
-@blueprint.route('/register', methods=['GET', 'POST'])
+@blueprint.route('/register', methods=['POST', 'GET'])
 def register():
-    create_account_form = CreateAccountForm(request.form)
-    if 'register' in request.form:
+    form = RegisterForm()
+    if request.method == "POST" and form.validate_on_submit() and verify_img(request.files['image'].filename):
+        try:
+            password_hash = generate_password_hash(request.form['password'])
+            u = User(user=request.form['username'], email=request.form['email'], password=password_hash)
+            db.session.add(u)
+            db.session.flush()
+            image = request.files['image']
+            image_encode = b64encode(image.read())
+            p = Profile(firstname=request.form['firstname'], lastname=request.form['lastname'], birthdate=request.form['birthdate'], user_id=u.id, img=image_encode)
+            db.session.add(p)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            print("Ошибка добавления в БД")
+            return render_template('page-404.html')
+        return redirect(url_for('login'))
+    return 'hferlhgf'
+    #render_template('profiles/register.html', title='Регистрация', form=form)
 
-        username = request.form['username']
-        email = request.form['email']
 
-        # Check usename exists
-        user = Users.query.filter_by(username=username).first()
-        if user:
-            return render_template('accounts/register.html',
-                                   msg='Username already registered',
-                                   success=False,
-                                   form=create_account_form)
-
-        # Check email exists
-        user = Users.query.filter_by(email=email).first()
-        if user:
-            return render_template('accounts/register.html',
-                                   msg='Email already registered',
-                                   success=False,
-                                   form=create_account_form)
-
-        # else we can create the user
-        user = Users(**request.form)
-        db.session.add(user)
-        db.session.commit()
-
-        # Delete user from session
-        logout_user()
-
-        return render_template('accounts/register.html',
-                               msg='User created successfully.',
-                               success=True,
-                               form=create_account_form)
-
-    else:
-        return render_template('accounts/register.html', form=create_account_form)
+@blueprint.route('/login', methods=['POST', 'GET']) 
+def login():
+    form = LoginForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        username = request.form.get('username')
+        psw = request.form.get('password')
+        for user in db.session.query(User).where(User.user == username):
+            if username == user.user and check_password_hash(user.psw, psw):
+                login_user(user=user)
+                return redirect(url_for('profile', user_id=current_user.id))
+            else:
+                flash('Неверная пара логин/пароль', 'error')
+    return render_template('profiles/login.html', form=form)  
 
 
 @blueprint.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('authentication_blueprint.login')) 
+    return redirect(url_for('ВСТАВИТЬ ССЫЛКУ НА ГЛАВНУЮ СТРАНИЦУ')) 
 
-# Errors
+
+@blueprint.route('/<int:user_id>', methods=['POST', 'GET'])
+@login_required
+def profile(user_id):
+    if current_user.is_authenticated:
+        #image = None
+        for form in db.session.query(Profile).where(Profile.user_id == current_user.id):
+            image = b64decode(form.image)
+        return render_template('profiles/profile.html', form=form, image=image)
+    return redirect(url_for('login')) 
+
+
+@blueprint.route('/<int:user_id>/update', methods=['POST', 'GET'])
+@login_required
+def prof_upd(user_id):
+    if request.method == 'POST' and current_user.is_authenticated:
+        try:
+            for user in db.session.query(Profile).where(Profile.user_id == current_user.id):
+                user.firstname = request.form.get('firstname') if request.form.get('firstname') else user.firstname
+                user.lastname = request.form.get('lastname') if request.form.get('lastname') else user.lastname
+                user.birthdate = request.form.get('birthdate') if request.form.get('birthdate') and validate_date(request.form.get('birthdate')) else user.birthdate
+                user.img = b64encode(request.files['img'].read()) if request.files['image'] else user.img
+                db.session.commit()
+                return redirect(url_for('profile', user_id=current_user.id))
+        except:
+                db.session.rollback()
+                return render_template('page-404.html')
+        return redirect(url_for('profile', user_id=current_user.id))
+    return render_template('profiles/profile_upd.html')
+
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
-    return render_template('home/page-403.html'), 403
+    return render_template('profiles/page-403.html'), 403
 
 
 @blueprint.errorhandler(403)
 def access_forbidden(error):
-    return render_template('home/page-403.html'), 403
+    return render_template('profiles/page-403.html'), 403
 
 
 @blueprint.errorhandler(404)
 def not_found_error(error):
-    return render_template('home/page-404.html'), 404
+    return render_template('profiles/page-404.html'), 404
 
 
 @blueprint.errorhandler(500)
 def internal_error(error):
-    return render_template('home/page-500.html'), 500
+    return render_template('profiles/page-500.html'), 500
