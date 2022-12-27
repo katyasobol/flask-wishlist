@@ -6,7 +6,7 @@ from app.config import config_dict
 from app import create_app, db
 
 # WARNING: Don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DEBUG')
 
 get_config_mode = 'Debug' if DEBUG else 'Production'
 
@@ -24,5 +24,9 @@ if DEBUG:
     app.logger.info('Page Compression = ' + 'FALSE' if DEBUG else 'TRUE' )
     app.logger.info('DBMS             = ' + app_config.SQLALCHEMY_DATABASE_URI)
 
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    return 'ghntym'
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
