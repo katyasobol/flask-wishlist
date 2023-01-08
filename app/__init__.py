@@ -3,7 +3,7 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
 
-from app.profiles import blueprint
+from .profiles import blueprint
 
 
 db = SQLAlchemy()
@@ -27,6 +27,6 @@ def create_app(config):
     app = Flask(__name__)
     app.config.from_object(config)
     register_extensions(app)
-    register_blueprints(app)   
+    app.register_blueprint(blueprint)   
     configure_database(app)
     return app

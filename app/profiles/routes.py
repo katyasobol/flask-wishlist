@@ -9,7 +9,7 @@ from app.profiles import blueprint
 from app.profiles.forms import LoginForm, RegisterForm, validate_date, verify_img
 from app.profiles.models import User, Profile
 
-@blueprint.route('/', methods=['POST', 'GET'])
+@blueprint.route('/profiles', methods=['POST', 'GET'])
 def main():
     return 'hello'
 
