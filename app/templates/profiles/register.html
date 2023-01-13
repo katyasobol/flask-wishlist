@@ -16,7 +16,7 @@
             <form action="#" method="post" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
                 <div class="user-details">
-                    <button><input type='file' name='img' id='file-input' multiple></button>
+                    <button><input type='file' name='image' id='file-input' multiple></button>
                     <div class="input-box">
                         <span class="details">Username</span>
                         {{ form.username }}
@@ -39,11 +39,11 @@
                     </div>
                     <div class="input-box">
                         <span class="details">Пароль</span>
-                        {{ form.psw }}
+                        {{ form.password }}
                     </div>
                     <div class="input-box">
                         <span class="details">Повтор пароля</span>
-                        {{ form.psw2 }}
+                        {{ form.password2 }}
                     </div>
                 </div>
                 <div class="button">

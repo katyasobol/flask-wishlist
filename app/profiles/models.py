@@ -9,9 +9,10 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(), nullable=False)
 
-    def __init__(self, user, email):
+    def __init__(self, user, email, password):
         self.user = user
         self.email = email
+        self.password = password
     
     def __repr__(self):
         return f'<user {self.id}>'
@@ -23,14 +24,14 @@ class Profile(db.Model):
     lastname = db.Column(db.String(80))
     birthdate = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    image = db.Column(db.String)
+    image = db.Column(db.LargeBinary)
 
-    def __init__(self, firstname, lastname, birthdate, user_id, img):
+    def __init__(self, firstname, lastname, birthdate, user_id, image):
         self.firstname = firstname
         self.lastname = lastname
         self.birthdate = birthdate
         self.user_id = user_id
-        self.img = img
+        self.image = image
 
     def __repr__(self):
         return f'<profile {self.id}>'

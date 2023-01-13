@@ -7,7 +7,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Введите свой юзернейм"}, name='username')
-    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": " Введите пароль"}, name='psw')
+    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": " Введите пароль"}, name='password')
     submit = SubmitField("Войти")
 
 class RegisterForm(FlaskForm):
@@ -18,7 +18,7 @@ class RegisterForm(FlaskForm):
     firstname = StringField(validators=[InputRequired(), Length(max=20)], render_kw={"placeholder": "Введите имя"}, name='firstname')
     lastname = StringField(validators=[InputRequired(), Length(max=20)], render_kw={"placeholder": "Введите Фамилию"}, name='lastname')
     birthdate = StringField(validators=[InputRequired(), Length(max=10), Regexp(r'\d\d.\d\d.\d{4}', message='Дата вида дд.мм.гггг')], render_kw={"placeholder": "Введите дату рождения"}, name='birthdate')
-    img = FileField(name='img', id='file-input')
+    image = FileField(name='image', id='file-input')
     submit = SubmitField("Зарегистрироваться")
 
 def validate_date(field):

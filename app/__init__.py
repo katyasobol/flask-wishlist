@@ -15,9 +15,9 @@ def register_extensions(app):
     login_manager.init_app(app)
 
 def register_blueprints(app):
-    for module_name in ('profiles',):
-        module = import_module('app.{}.routes'.format(module_name))
-        app.register_blueprint(module.blueprint)
+    #for module_name in ('profiles',):
+    module = import_module('app.{}.routes'.format('profiles'))
+    app.register_blueprint(module.blueprint)
 
 def configure_database(app):
     with app.app_context():
@@ -27,6 +27,7 @@ def create_app(config):
     app = Flask(__name__)
     app.config.from_object(config)
     register_extensions(app)
-    app.register_blueprint(blueprint)   
+    register_blueprints(app)
+    #app.register_blueprint(blueprint, url_prefix='/profiles')   
     configure_database(app)
     return app

@@ -14,14 +14,14 @@
 <body>
     <section class="main">
         <div class="buttonset">
-            <a href="/profile/update" class="btn">Настройки</a>
+            <a href="/profiles/{{ current_user.id }}/update" class="btn">Настройки</a>
         </div>
         <div class="buttonset">
             <a href="/logout" class="btn1">Выйти</a>
         </div>
         <div class="profile-card">
             <div class="image">
-                <img src="data:image/jpeg;base64,{{ image }}" />
+                <img src="data:image/jpg;base64,{{ image }}" />
             </div>
             <div class="data">
                 <h2>{{ form.firstname }} {{ form.lastname }}</h2>

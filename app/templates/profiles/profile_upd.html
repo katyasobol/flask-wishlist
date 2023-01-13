@@ -15,7 +15,7 @@
         <div class="content">
             <form action="#" method="post" enctype="multipart/form-data">
                 <div class="user-details">
-                    <button><input type='file' name='img' id='file-input' multiple></button>
+                    <button><input type='file' name='image' id='file-input' multiple></button>
                     <div class="input-box">
                         <span class="details">Имя</span>
                         <input type="text" name="firstname">
@@ -30,7 +30,7 @@
                     </div>
                     <div class="button">
                         <input type="submit">
-                        <a href="profile/{{ current_user.id }}"></a>
+                        <a href="/profiles/{{ current_user.id }}"></a>
                     </div>
             </form>
         </div>
