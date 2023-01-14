@@ -4,7 +4,6 @@ from flask import render_template, redirect, request, url_for, flash
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 
-
 from app import db, login_manager
 from app.profiles import blueprint
 from app.profiles.forms import LoginForm, RegisterForm, validate_date, verify_img
@@ -31,7 +30,7 @@ def register():
         except:
             db.session.rollback()
             print("Ошибка добавления в БД")
-            return render_template('profiles/page-404.html')
+            return render_template('layout/page-404.html')
         return redirect(url_for('profiles.login'))
     return render_template('profiles/register.html', form=form)
 
@@ -83,19 +82,19 @@ def prof_upd(user_id):
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
-    return render_template('profiles/page-403.html'), 403
+    return render_template('layout/page-403.html'), 403
 
 
 @blueprint.errorhandler(403)
 def access_forbidden(error):
-    return render_template('profiles/page-403.html'), 403
+    return render_template('layout/page-403.html'), 403
 
 
 @blueprint.errorhandler(404)
 def not_found_error(error):
-    return render_template('profiles/page-404.html'), 404
+    return render_template('layout/page-404.html'), 404
 
 
 @blueprint.errorhandler(500)
 def internal_error(error):
-    return render_template('profiles/page-500.html'), 500
+    return render_template('layout/page-500.html'), 500

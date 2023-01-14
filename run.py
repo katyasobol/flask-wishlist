@@ -1,6 +1,7 @@
 import os
 from flask_migrate import Migrate
 from sys import exit
+from flask import render_template
 
 from app.config import config_dict
 from app import create_app, db
@@ -26,7 +27,7 @@ if DEBUG:
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return 'ghntym'
+    return render_template('layout/index.html')
 
 if __name__ == "__main__":
     app.run()

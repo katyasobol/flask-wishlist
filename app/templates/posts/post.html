@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!---Coding By CoderGirl!--->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--<title> Profle Card UI Design | CoderGirl </title>-->
+    <!---Custom Css File!--->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css')}}">
+</head>
+
+<body>
+    <section class="main">
+        <div class="buttonset">
+            <a href="/posts/{{ form.user_id }}" class="btn1">Вернуться</a>
+        </div>
+        <div class="profile-card">
+            <div class="image">
+                <img src="data:(image);base64,{{ image }}" />
+            </div>
+            <div class="datapost">
+                <h2>{{ form.title }}</h2>
+                <h3>{{ form.price }}</h3>
+                <h3><a href="{{ form.url }}">{{ form.url }}</a></h3>
+                <h3>{{ form.comment }}</h3>
+            </div>
+            {% if current_user.id == form.user_id %}
+            <div class="buttons">
+                <a href="/posts/{{ form.id }}/delete" class="btn">Удалить</a>
+            </div>
+            {% else %}
+            <div class="buttons">
+                <a href="/posts/book/{{ form.id }}" class="btn">Забронировать</a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+</body>
+
+</html>

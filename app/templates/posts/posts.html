@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!---Coding By CoderGirl!--->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--<title> Profle Card UI Design | CoderGirl </title>-->
+    <!---Custom Css File!--->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css')}}">
+</head>
+
+<body>
+    <section class="main">
+        {% if current_user.is_authenticated and current_user.id == user_id %}
+        <div class="buttonlist">
+            <a href="/posts/wish" class="btn">Добавить желание</a>
+        </div>
+        <div class="buttonlist">
+            <a href="/profiles/{{ current_user.id }}" class="btn1">Вернуться</a>
+        </div>
+        {% else %}
+        <div class="buttonlist">
+            <a href="/profiles/register" class="btn">Регистрация</a>
+        </div>
+        <div class="buttonlist">
+            <a href="/profiles/login" class="btn1">Войти</a>
+        </div>
+        {% endif %}
+        <div class="list">
+            {%for p in form %}
+            <h3><a href="/posts/post/{{ p.id }}">{{ p.title }}</a></h3>
+            {% if p.id in book %}
+            <h4>Забронирован</h4>
+            {% else %}
+            {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+</body>
+
+</html>
