@@ -24,22 +24,27 @@ def new_post():
         return redirect(url_for('profiles.profile', user_id=current_user.id))
     return render_template('posts/new_post.html', form=form)
 
-@blueprint.route('/<int:user_id>/<int:post_id>', methods=['POST', 'GET'])
+@blueprint.route('/wish/<int:post_id>', methods=['POST', 'GET'])
 def post(post_id):
+    forms = None
+    image = None
     for form in db.session.query(Post).where(Post.id == post_id):
-        image = b64decode(form.img)
-    return render_template('post.html', form=form, image=image)
+        forms = form
+        image = b64decode(form.image)
+    return render_template('posts/post.html', form=forms, image=image, post_id=post_id)
 
-@blueprint.route('/<int:post_id>', methods=['POST', 'GET'])
-def posts(post_id):
-    book = []
+@blueprint.route('/<int:posts_id>', methods=['POST', 'GET'])
+def posts(posts_id):
+    books = []
     user_id = None
-    post = db.session.query(Post).where(Post.user_id == post_id)
+    post_id = None
+    post = db.session.query(Post).where(Post.user_id == posts_id)
     for u in post:
         user_id = u.user_id
+        post_id = u.id
     for p in db.session.query(Book).where(Book.book == True):
-        book.append(p.post_id)
-    return render_template('posts/posts.html', form=post, book=book, user_id=user_id, post_id=post.id)
+        books.append(p.post_id)
+    return render_template('posts/posts.html', form=post, book=books, user_id=user_id, post_id=post_id)
 
 @blueprint.route('/<int:post_id>/update', methods=['POST', 'GET'])
 @login_required
@@ -52,10 +57,8 @@ def post_upd(post_id):
                 post.comment = request.form.get('comment') if request.form.get('comment') else post.comment
                 post.url = request.form.get('url') if request.form.get('url') else post.url
                 post.image = b64encode(request.files['image'].read()) if request.files['image'] else post.image
-                db.session.commit()
-                return redirect(url_for('profiles.profile'), post_id=post.id)
+                return redirect(url_for('profiles.profile'), post_id=post_id)
         except:
-                db.session.rollback()
                 return render_template('layout/page-404.html')
     return render_template('posts/post_upd.html', post_id=post.id)
 
@@ -94,4 +97,8 @@ def book(post_id):
             print("Ошибка добавления в БД")
             return render_template('layout/page-404.html')
     return render_template('posts/book.html', form=form)
+
+@blueprint.route('/no_wish', methods=['POST', 'GET'])
+def no_wish():
+    return render_template('posts/no_wish.html')
 

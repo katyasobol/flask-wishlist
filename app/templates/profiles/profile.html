@@ -17,7 +17,7 @@
             <a href="/profiles/{{ current_user.id }}/update" class="btn">Настройки</a>
         </div>
         <div class="buttonset">
-            <a href="profiles/logout" class="btn1">Выйти</a>
+            <a href="/profiles/logout" class="btn1">Выйти</a>
         </div>
         <div class="profile-card">
             <div class="image">
@@ -31,7 +31,7 @@
             <div class="row">
             </div>
             <div class="buttons">
-                <a href="/posts/{{ post_id }}" class="btn">желания</a>
+                <a href="/posts/{{ form.user_id }}" class="btn">желания</a>
                 <a href="/posts/wish" class="btn">создать желание</a>
             </div>
         </div>

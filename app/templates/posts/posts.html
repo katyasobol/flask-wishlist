@@ -30,7 +30,7 @@
         {% endif %}
         <div class="list">
             {%for p in form %}
-            <h3><a href="/posts/post/{{ p.id }}">{{ p.title }}</a></h3>
+            <h3><a href="/posts/wish/{{ post_id }}">{{ p.title }}</a></h3>
             {% if p.id in book %}
             <h4>Забронирован</h4>
             {% else %}
