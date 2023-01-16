@@ -9,9 +9,6 @@ from app.profiles import blueprint
 from app.profiles.forms import LoginForm, RegisterForm, validate_date, verify_img
 from app.profiles.models import User, Profile
 
-@blueprint.route('/', methods=['POST', 'GET'])
-def main():
-    return 'hello'
 
 @blueprint.route('/register', methods=['POST', 'GET'])
 def register():
@@ -53,7 +50,7 @@ def login():
 @blueprint.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('ВСТАВИТЬ ССЫЛКУ НА ГЛАВНУЮ СТРАНИЦУ')) 
+    return redirect(url_for('index')) 
 
 
 @blueprint.route('/<int:user_id>', methods=['POST', 'GET'])
@@ -76,6 +73,7 @@ def prof_upd(user_id):
             user.lastname = request.form['lastname'] if request.form.get('lastname') else user.lastname
             user.birthdate = request.form['birthdate'] if request.form.get('birthdate') and validate_date(request['birthdate']) else user.birthdate
             user.image = base64.b64encode(request.files['image'].read()) if request.files.get('image') else user.image
+            db.session.commit()
         return redirect(url_for('profiles.profile', user_id=current_user.id))
     return render_template('profiles/profile_upd.html', user_id=current_user.id)
 

@@ -29,6 +29,7 @@
             {% if current_user.id == form.user_id %}
             <div class="buttons">
                 <a href="/posts/{{ form.id }}/delete" class="btn">Удалить</a>
+                <a href="/posts/{{ form.id }}/update" class="btn">Редактировать</a>
             </div>
             {% else %}
             <div class="buttons">

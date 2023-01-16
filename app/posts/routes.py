@@ -49,18 +49,21 @@ def posts(posts_id):
 @blueprint.route('/<int:post_id>/update', methods=['POST', 'GET'])
 @login_required
 def post_upd(post_id):
-    if request.method == 'POST' and verify_img(request.files['image'].filename):
+    post_id = None
+    if request.method == 'POST':
         try:
             for post in db.session.query(Post).where(Post.user_id == current_user.id):
                 post.title = request.form.get('title') if request.form.get('title') else post.title
                 post.price = request.form.get('price') if request.form.get('price') else post.price
                 post.comment = request.form.get('comment') if request.form.get('comment') else post.comment
                 post.url = request.form.get('url') if request.form.get('url') else post.url
-                post.image = b64encode(request.files['image'].read()) if request.files['image'] else post.image
-                return redirect(url_for('profiles.profile'), post_id=post_id)
+                post.image = b64encode(request.files['image'].read()) if request.files['image'] and verify_img(request.files['image'].filename) else post.image
+                post_id = post.id
+                db.session.commit()
+                return redirect(url_for('profiles.profile', user_id=current_user.id))
         except:
                 return render_template('layout/page-404.html')
-    return render_template('posts/post_upd.html', post_id=post.id)
+    return render_template('posts/post_upd.html', post_id=post_id)
 
 @blueprint.route('/<int:post_id>/delete', methods=['POST', 'GET'])
 @login_required
@@ -75,10 +78,10 @@ def delete(post_id):
             db.session.delete(book)
         db.session.delete(post)
         db.session.commit()
-        return redirect(url_for('posts.posts', post_id=post_id))
+        return redirect(url_for('posts', post_id=post_id))
     except:
         db.session.rollback()
-        return render_template('layout/page-404.html')
+        return 'mistake'
 
 @blueprint.route('/book/<int:post_id>', methods=['POST', 'GET'])
 def book(post_id):
