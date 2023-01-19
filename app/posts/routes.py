@@ -50,7 +50,7 @@ def posts(posts_id):
 @login_required
 def post_upd(post_id):
     post_id = None
-    if request.method == 'POST':
+    if request.method == 'UPDATE':
         try:
             for post in db.session.query(Post).where(Post.user_id == current_user.id):
                 post.title = request.form.get('title') if request.form.get('title') else post.title
@@ -71,6 +71,7 @@ def delete(post_id):
     try:
         book_id = None
         post = Post.query.get(post_id)
+        posts_id = post.user_id
         for p in db.session.query(Book).where(Book.post_id == post.id):
             book_id = p.id
         if book_id != None:
@@ -78,10 +79,10 @@ def delete(post_id):
             db.session.delete(book)
         db.session.delete(post)
         db.session.commit()
-        return redirect(url_for('posts', post_id=post_id))
+        return redirect(url_for('profiles.profile', user_id=current_user.id))
     except:
         db.session.rollback()
-        return 'mistake'
+        return render_template('layout/page-404.html')
 
 @blueprint.route('/book/<int:post_id>', methods=['POST', 'GET'])
 def book(post_id):
