@@ -18,6 +18,7 @@ lesscpy==0.15.1
 Mako==1.2.4
 MarkupSafe==2.1.1
 ply==3.11
+psycopg2-binary==2.9.5
 python-dotenv==0.21.0
 rcssmin==1.1.1
 six==1.16.0
