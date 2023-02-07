@@ -23,8 +23,9 @@ class RegisterForm(FlaskForm):
 
 def validate_date(field):
         if re.fullmatch(field, r'\d\d\.\d\d\.\d{4}'):
-            raise ValidationError('дата формата дд,мм.гггг')
-        return True
+            return True
+        else:
+            raise ValidationError('дата формата дд.мм.гггг')
 
 def verify_img(filename):
     ext = filename.rsplit('.', 1)[1].lower()
