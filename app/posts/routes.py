@@ -102,4 +102,3 @@ def book(post_id):
             return render_template('layout/page-404.html')
     return render_template('posts/book.html', form=form)
 
-
